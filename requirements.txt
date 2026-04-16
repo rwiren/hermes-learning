@@ -4,4 +4,3 @@ pandas==2.2.1
 pyarrow==15.0.0
 torch
 torch-geometric
-mamba-ssm

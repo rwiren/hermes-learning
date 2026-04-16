@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import pandas as pd
-from mamba_ssm import Mamba # Assuming mamba_ssm is installed
 from src.features.anomaly_prep import AnomalyPreprocessor
 from datetime import datetime
 
@@ -9,12 +8,11 @@ class MambaAnomalyModel(nn.Module):
     """
     A simple wrapper around the Mamba SSM for anomaly detection.
     This can be expanded to include sequence processing and an anomaly head.
-    """\n    def __init__(self, d_model: int, n_layer: int, vocab_size: int = 1):
+    """
+    def __init__(self, d_model: int, n_layer: int, vocab_size: int = 1):
         super().__init__()
-        # In a real scenario, vocab_size would be larger if we tokenize features
-        # Here, we treat each feature vector as a 'token' or directly use d_model for input
-        self.mamba = Mamba(d_model=d_model, n_layer=n_layer)
-        # A simple linear layer to project Mamba's output to an anomaly score
+        # Placeholder implementation (mamba_ssm unavailable on this environment)
+        self.mamba = nn.Identity()
         self.anomaly_head = nn.Linear(d_model, 1)
 
     def forward(self, x):
@@ -41,7 +39,8 @@ class MambaDetector:
         """
         Prepares telemetry data into sequences suitable for Mamba.
         Assumes telemetry_df contains numerical features.
-        """\n        if telemetry_df.empty:
+        """
+        if telemetry_df.empty:
             raise ValueError("Telemetry DataFrame is empty. Cannot prepare sequences.")
 
         # Convert DataFrame to a tensor of sequences

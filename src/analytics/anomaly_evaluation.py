@@ -36,7 +36,7 @@ def run_initial_anomaly_evaluation(date: str, anomaly_threshold: float = 0.5):
 
     # --- MCHC Detector Evaluation ---
     print("\nEvaluating MCHC Detector...")
-    mchc_detector = MCHCDectector(num_features=num_features)
+    mchc_detector = MCHCDectector(num_node_features=num_features)
     mchc_anomalies = mchc_detector.detect_anomalies(prepared_data.copy())
     mchc_anomaly_count = (mchc_anomalies['anomaly_score'] > anomaly_threshold).sum()
     print(f"MCHC Detector: Detected {mchc_anomaly_count}/{num_records} anomalies (>{anomaly_threshold}).")

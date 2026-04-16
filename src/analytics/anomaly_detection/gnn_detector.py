@@ -3,10 +3,10 @@ import pandas as pd
 from torch_geometric.data import Data
 from torch_geometric.nn import GCNConv # Example GNN layer
 import torch.nn.functional as F
-import os
+import torch_geometric
 from datetime import datetime
 
-from src.features.anomaly_prep import AnomalyPreprocessor # Assuming AnomalyPreprocessor exists
+from src.features.anomaly_prep import AnomalyPreprocessor
 
 class SimpleGNN(torch.nn.Module):
     """
@@ -42,7 +42,8 @@ class GNNDetector:
         Builds a PyTorch Geometric Data object from telemetry data.
         Nodes represent aircraft observations. Edges can be temporal or spatial.
         This is a simplified approach; a more robust GNN would use heterogeneous graphs.
-        """\n        if telemetry_df.empty:
+        """
+        if telemetry_df.empty:
             raise ValueError("Telemetry DataFrame is empty. Cannot build graph.")
 
         # Node features (aircraft telemetry)
