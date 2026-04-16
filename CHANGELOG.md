@@ -1,6 +1,6 @@
 # 📝 Project Changelog
 
-All notable changes to the **ADS-B Research Grid** project will be documented in this file.
+All notable changes to the **hermes-learning** project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Pipeline Analytics & Visualization:** Introduced `src/analytics/pipeline_visualizer.py` to generate analytical plots (Storage Growth, Daily Volume) for monitoring pipeline health.
+- **Pipeline Orchestration (Stage 4):** Integrated analytics step into `run_pipeline.py` to automate post-processing visualization.
+- **Standardized Asset Management:** Created `assets/` structure (`plots`, `images`, `audio`) for managed storage of pipeline artifacts.
+- **Analytical Documentation:** Introduced `docs/analysis/` directory with a structured `pipeline_audit_template.md` for formal pipeline performance audits.
+- **Dependency Robustness:** Updated `requirements.txt` with `seaborn` and `pyarrow` to support advanced analytics and Parquet operations.
 - **ML Environment Setup:** Updated `requirements.txt` with `torch`, `torch-geometric`, and `mamba-ssm`.
 - **Data Preparation for Anomaly Detection:** Implemented `src/features/anomaly_prep.py` to load and prepare telemetry data for anomaly detection models.
 - **Foundational GNN Anomaly Detector:** Implemented `src/analytics/anomaly_detection/gnn_detector.py` for spatial anomaly detection using a simple GNN model.
