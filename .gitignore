@@ -1,2 +1,7 @@
 data/raw/
 data/processed/
+data/storage/
+pipeline.log
+reports/
+**/__pycache__/
+*.pyc

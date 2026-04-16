@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **xLSTM Anomaly Detector:** Implemented `src/analytics/anomaly_detection/xlstm_detector.py` for rapid maneuver anomaly detection.
 - **Initial Anomaly Detection Evaluation Script:** Implemented `src/analytics/anomaly_evaluation.py` to provide a foundational framework for evaluating anomaly detection models.
 - **Stability Fixes:** Fixed import/runtime issues in `gnn_detector.py`, `mamba_detector.py`, and `anomaly_evaluation.py` and validated successful execution of the initial anomaly evaluation pipeline.
+- **Model Benchmark Pipeline:** Added `src/analytics/model_benchmark_pipeline.py` for unified train/test/validate/compare workflow across anomaly and trajectory models with automatic metric export and plot generation.
+- **Trajectory Predictors:** Added `src/models/trajectory_prediction/mamba_predictor.py` and `src/models/trajectory_prediction/xlstm_predictor.py` for baseline trajectory benchmarking integration.
+- **Benchmark Dependencies:** Added `scikit-learn` and `matplotlib` to support metrics computation and performance visualization.
 
 
 
