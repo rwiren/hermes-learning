@@ -35,3 +35,8 @@
 
 ## 4. Conclusion & Recommendations
 [Action items to improve pipeline robustness, model calibration, and data quality]
+## 3. Detailed Findings
+[Deep dive into specific anomalies or bottleneck observations]
+
+## 4. Conclusion & Recommendations
+[Action items to improve pipeline robustness or data quality]
