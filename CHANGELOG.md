@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Live Stage-1 SECURESKIES Scraper:** Replaced mocked extraction in `src/ingestion/scraper.py` with Playwright-based live ingestion from `http://www.securingskies.eu:8080/`, including configurable duration/interval collection.
+- **Snapshot + Normalized Persistence:** Added dual-output ingestion artifacts (`telemetry_snapshots_<run_id>.json` and `telemetry_<run_id>.json`) to support traceability and reproducible downstream transformation.
+- **Strict Anomaly Evaluation Outputs:** Added strict evaluation result artifacts with expanded metrics (`AUROC`, `AUPRC`, `Brier`, `Precision`, `Recall`, `F1`, `MCC`, balanced accuracy, confusion matrix) in:
+  - `reports/metrics/anomaly_strict_eval_2026-04-16_with_live.csv`
+  - `reports/metrics/anomaly_strict_eval_summary_2026-04-16_with_live.csv`
+- **Merged Strict-Eval Dataset Snapshot:** Added merged evaluation dataset index at `data/storage/2026-04-16/strict_eval_merged_2026-04-16.csv` for reproducibility across model runs.
+- **README Operational Updates:** Updated setup and operations docs to include Playwright installation, Chromium bootstrap, live scraper usage, tactical hub URL constraints, and strict-evaluation report references.
 - **Pipeline Analytics & Visualization:** Introduced `src/analytics/pipeline_visualizer.py` to generate analytical plots (Storage Growth, Daily Volume) for monitoring pipeline health.
 - **Pipeline Orchestration (Stage 4):** Integrated analytics step into `run_pipeline.py` to automate post-processing visualization.
 - **Standardized Asset Management:** Created `assets/` structure (`plots`, `images`, `audio`) for managed storage of pipeline artifacts.
