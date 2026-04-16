@@ -33,4 +33,4 @@ The pipeline is structured into four deterministic stages:
 3. Follow branch and commit conventions outlined in `CONTRIBUTING.md`.
 
 ## License
-Proprietary / Restricted to authorized personnel.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
