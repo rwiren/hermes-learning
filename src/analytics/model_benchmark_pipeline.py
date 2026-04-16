@@ -55,25 +55,35 @@ def run_benchmark(date: str):
 
     # ---------- Anomaly models ----------
     anomaly_ground_truth = _anomaly_metrics(raw_df)
+    anomaly_outputs = {}
+    
+    try:
+        gnn = GNNDetector(sensor_locations={"north": (60.19, 24.94), "west": (60.20, 24.80), "east": (60.10, 25.10)}, num_features=features_df.shape[1])
+        gnn_out = gnn.detect_anomalies(features_df.copy())
+        anomaly_outputs["GNN"] = gnn_out["anomaly_score"].values
+    except Exception as e:
+        print(f"Skipping GNN: {e}")
 
-    gnn = GNNDetector(sensor_locations={"north": (60.19, 24.94), "west": (60.20, 24.80), "east": (60.10, 25.10)}, num_features=features_df.shape[1])
-    gnn_out = gnn.detect_anomalies(features_df.copy())
+    try:
+        mchc = MCHCDectector(num_node_features=features_df.shape[1])
+        mchc_out = mchc.detect_anomalies(features_df.copy())
+        anomaly_outputs["DeepSeek_MCHC"] = mchc_out["anomaly_score"].values
+    except Exception as e:
+        print(f"Skipping MCHC: {e}")
 
-    mchc = MCHCDectector(num_node_features=features_df.shape[1])
-    mchc_out = mchc.detect_anomalies(features_df.copy())
+    try:
+        mamba = MambaDetector(d_model=features_df.shape[1], sequence_length=2)
+        mamba_out = mamba.detect_anomalies(features_df.copy())
+        anomaly_outputs["Mamba_SSM"] = mamba_out["anomaly_score"].values
+    except Exception as e:
+        print(f"Skipping Mamba: {e}")
 
-    mamba = MambaDetector(d_model=features_df.shape[1], sequence_length=2)
-    mamba_out = mamba.detect_anomalies(features_df.copy())
-
-    xlstm = XLSTMDetector(input_size=features_df.shape[1], sequence_length=2)
-    xlstm_out = xlstm.detect_anomalies(features_df.copy())
-
-    anomaly_outputs = {
-        "GNN": gnn_out["anomaly_score"].values,
-        "DeepSeek_MCHC": mchc_out["anomaly_score"].values,
-        "Mamba_SSM": mamba_out["anomaly_score"].values,
-        "xLSTM": xlstm_out["anomaly_score"].values,
-    }
+    try:
+        xlstm = XLSTMDetector(input_size=features_df.shape[1], sequence_length=2)
+        xlstm_out = xlstm.detect_anomalies(features_df.copy())
+        anomaly_outputs["xLSTM"] = xlstm_out["anomaly_score"].values
+    except Exception as e:
+        print(f"Skipping xLSTM: {e}")
 
     for model_name, scores in anomaly_outputs.items():
         results.append(BenchmarkResult(model=model_name, task="anomaly", metric_name="mean_score", metric_value=float(np.mean(scores))))
