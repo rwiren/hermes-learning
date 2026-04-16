@@ -5,6 +5,13 @@ All notable changes to the **ADS-B Research Grid** project will be documented in
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **ML Environment Setup:** Updated `requirements.txt` with `torch`, `torch-geometric`, and `mamba-ssm`.
+- **Data Preparation for Anomaly Detection:** Implemented `src/features/anomaly_prep.py` to load and prepare telemetry data for anomaly detection models.
+- **Foundational GNN Anomaly Detector:** Implemented `src/analytics/anomaly_detection/gnn_detector.py` for spatial anomaly detection using a simple GNN model.
+
 ## [0.12.0] - 2026-04-16: The "Automation" Update
 **Feature Release: Stage 4 Data Pipeline Automation.**
 
