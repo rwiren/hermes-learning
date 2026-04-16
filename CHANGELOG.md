@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Foundational DeepSeek MCHC Anomaly Detector:** Implemented `src/analytics/anomaly_detection/mchc_detector.py` for ghost aircraft detection with a placeholder MCHC model.
 - **Mamba SSM Anomaly Detector:** Implemented `src/analytics/anomaly_detection/mamba_detector.py` for drift attack detection and long-context trajectory tracking.
 - **xLSTM Anomaly Detector:** Implemented `src/analytics/anomaly_detection/xlstm_detector.py` for rapid maneuver anomaly detection.
+- **Initial Anomaly Detection Evaluation Script:** Implemented `src/analytics/anomaly_evaluation.py` to provide a foundational framework for evaluating anomaly detection models.
+
+
 
 
 
