@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **ML Environment Setup:** Updated `requirements.txt` with `torch`, `torch-geometric`, and `mamba-ssm`.
 - **Data Preparation for Anomaly Detection:** Implemented `src/features/anomaly_prep.py` to load and prepare telemetry data for anomaly detection models.
 - **Foundational GNN Anomaly Detector:** Implemented `src/analytics/anomaly_detection/gnn_detector.py` for spatial anomaly detection using a simple GNN model.
+- **Foundational DeepSeek MCHC Anomaly Detector:** Implemented `src/analytics/anomaly_detection/mchc_detector.py` for ghost aircraft detection with a placeholder MCHC model.
+
+
+
+
 
 ## [0.12.0] - 2026-04-16: The "Automation" Update
 **Feature Release: Stage 4 Data Pipeline Automation.**
