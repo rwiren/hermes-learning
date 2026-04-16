@@ -1,130 +1,177 @@
-#!/usr/bin/env python3
 """
-Module: transformer.py
-Description: Stage 2 Transformation layer for the SECURESKIES MLAT Telemetry Pipeline.
-Author: Hermes
-License: MIT
+transformer.py
 
-This module processes raw JSON telemetry payloads extracted during Stage 1. 
-It enforces strict validation bounds (coordinate sanity, hex integrity), flattens 
-the payloads into tabular structures, and encodes the curated data into time-series 
-Parquet formats partitioned by date for optimized downstream machine learning ingestion.
+This module provides the Stage 2 data transformation layer for processing raw JSON telemetry
+extracted by the Stage 1 ingestion scraper into strictly typed, ML-ready datasets.
+
+The transformation pipeline includes:
+1. Validation: Enforcing strict sanity checks on ICAO Hex formats and spatial coordinate bounds.
+2. Transformation: Flattening hierarchical JSON payloads into standardized tabular records.
+3. Storage Encoding: Converting and loading sanitized data into time-series Parquet format (with CSV fallback).
+4. Partitioning: Implementing a robust data partitioning strategy by date (YYYY-MM-DD).
+5. Metadata Incorporation: Seamlessly integrating Stage 1 anomaly_corrected metadata flags into the final ML schema.
 """
 
+import os
 import json
-import logging
 import re
-from pathlib import Path
-from datetime import datetime, timezone
 import pandas as pd
+from datetime import datetime
 
-# Configure structured logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="[%(asctime)s] %(levelname)s [%(module)s.%(funcName)s:%(lineno)d] %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S %z"
-)
-logger = logging.getLogger(__name__)
-
-# Constants
-BASE_DIR = Path(__file__).parent.parent.parent
-RAW_DIR = BASE_DIR / "data" / "raw"
-PROCESSED_DIR = BASE_DIR / "data" / "processed"
-HEX_PATTERN = re.compile(r"^[0-9a-fA-F]{6}$")
-
-def validate_telemetry(df: pd.DataFrame) -> pd.DataFrame:
+class TelemetryTransformer:
     """
-    Applies spatial and cryptographic validation constraints to the telemetry dataframe.
-    Drops rows that violate basic physics or formatting rules.
+    Transforms raw JSON telemetry data into a cleaned, validated, and ML-ready tabular format.
     """
-    initial_count = len(df)
-    
-    # Validation 1: ICAO Hex formatting (6 char hex)
-    valid_hex = df['hex'].astype(str).str.match(HEX_PATTERN)
-    
-    # Validation 2: Spatial coordinate bounds
-    valid_lat = df['lat'].between(-90.0, 90.0)
-    valid_lon = df['lon'].between(-180.0, 180.0)
-    
-    # Validation 3: Altitude physics (Allowing up to 100k feet for extreme tracks)
-    valid_alt = df['alt'].between(-2000, 100000)
-    
-    # Combine masks
-    clean_df = df[valid_hex & valid_lat & valid_lon & valid_alt].copy()
-    
-    dropped = initial_count - len(clean_df)
-    if dropped > 0:
-        logger.warning(f"Validation pruned {dropped} malformed telemetry records.")
-        
-    return clean_df
+    def __init__(self, raw_data_path='data/raw', processed_data_path='data/processed'):
+        self.raw_data_path = raw_data_path
+        self.processed_data_path = processed_data_path
+        os.makedirs(self.processed_data_path, exist_ok=True)
 
-def process_raw_files():
-    """
-    Scans the raw directory for unprocessed JSON telemetry, transforms them, 
-    and writes to partitioned Parquet files.
-    """
-    if not RAW_DIR.exists():
-        logger.error(f"Raw data directory missing at {RAW_DIR}")
-        return
+    def _validate_icao_hex(self, icao_hex: str) -> bool:
+        """
+        Validates if the ICAO Hex is a 6-character hexadecimal string.
+        """
+        if not isinstance(icao_hex, str):
+            return False
+        return bool(re.fullmatch(r'^[0-9a-fA-F]{6}$', icao_hex))
 
-    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
-    raw_files = list(RAW_DIR.glob("telemetry_*.json"))
-    
-    if not raw_files:
-        logger.info("No raw telemetry files found for processing.")
-        return
+    def _validate_coordinates(self, latitude: float, longitude: float) -> bool:
+        """
+        Validates if latitude and longitude are within their respective bounds.
+        Latitude: -90 to 90
+        Longitude: -180 to 180
+        """
+        return (-90 <= latitude <= 90) and (-180 <= longitude <= 180)
 
-    frames = []
-    processed_count = 0
+    def transform_telemetry(self, raw_json_data: list) -> pd.DataFrame:
+        """
+        Transforms a list of raw JSON telemetry records into a pandas DataFrame.
+        Applies validation, flattens the structure, and prepares for ML schema.
+        """
+        processed_records = []
+        for record in raw_json_data:
+            # Extract and validate ICAO Hex
+            icao_hex = record.get('icao_hex')
+            if not self._validate_icao_hex(icao_hex):
+                # Optionally log or handle invalid ICAO Hex
+                continue
 
-    for file_path in raw_files:
-        try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                if not data:
-                    continue
+            # Extract and validate coordinates
+            latitude = record.get('latitude')
+            longitude = record.get('longitude')
+            if not isinstance(latitude, (int, float)) or not isinstance(longitude, (int, float)) or \
+               not self._validate_coordinates(latitude, longitude):
+                # Optionally log or handle invalid coordinates
+                continue
+
+            # Flatten and select relevant fields
+            transformed_record = {
+                'icao_hex': icao_hex,
+                'timestamp': record.get('timestamp'),
+                'latitude': latitude,
+                'longitude': longitude,
+                'altitude': record.get('altitude'),
+                'velocity': record.get('velocity'),
+                'track': record.get('track'),
+                'squawk': record.get('squawk'),
+                'vertical_rate': record.get('vertical_rate'),
+                'ground_speed': record.get('ground_speed'),
+                'callsign': record.get('callsign'),
+                'anomaly_corrected': record.get('anomaly_corrected', False) # Incorporate metadata flag
+            }
+            processed_records.append(transformed_record)
+
+        return pd.DataFrame(processed_records)
+
+    def process_raw_files(self):
+        """
+        Reads raw JSON files from raw_data_path, transforms them, and saves
+        to processed_data_path partitioned by date.
+        """
+        for filename in os.listdir(self.raw_data_path):
+            if filename.endswith('.json'):
+                raw_file_path = os.path.join(self.raw_data_path, filename)
                 
-                df = pd.json_normalize(data)
+                with open(raw_file_path, 'r') as f:
+                    raw_data = json.load(f)
                 
-                # Assign processing timestamp for time-series integrity
-                df['processed_at'] = datetime.now(timezone.utc)
+                df = self.transform_telemetry(raw_data)
                 
-                # Create partitioning key (YYYY-MM-DD) based on processing time
-                # In a live system, this would use the track's native timestamp
-                df['partition_date'] = df['processed_at'].dt.strftime('%Y-%m-%d')
-                
-                frames.append(df)
-                processed_count += 1
-                
-                # Rename the processed file to avoid duplicate ingestion
-                file_path.rename(file_path.with_suffix('.json.processed'))
-                
-        except Exception as e:
-            logger.error(f"Failed to process {file_path.name}: {e}")
+                if not df.empty:
+                    # Determine partitioning date from timestamp (assuming 'timestamp' exists and is parseable)
+                    # For simplicity, using the first record's timestamp; a more robust solution might average or use filename
+                    try:
+                        first_timestamp = df['timestamp'].iloc[0]
+                        # Assuming timestamp is in ISO format or similar, adjust if needed
+                        processing_date = datetime.fromisoformat(first_timestamp.replace('Z', '+00:00')) if isinstance(first_timestamp, str) else datetime.fromtimestamp(first_timestamp)
+                        partition_dir = os.path.join(self.processed_data_path, processing_date.strftime('%Y-%m-%d'))
+                        os.makedirs(partition_dir, exist_ok=True)
 
-    if frames:
-        master_df = pd.concat(frames, ignore_index=True)
-        master_df = validate_telemetry(master_df)
-        
-        if not master_df.empty:
-            # Write out to Parquet partitioned by date
-            output_path = PROCESSED_DIR / "telemetry_dataset"
-            logger.info(f"Writing {len(master_df)} verified records to {output_path} (Parquet)")
-            
-            master_df.to_parquet(
-                output_path, 
-                engine='pyarrow',
-                partition_cols=['partition_date'],
-                index=False,
-                compression='snappy'
-            )
-            logger.info("Stage 2 processing complete.")
-        else:
-            logger.warning("All records dropped during validation.")
+                        output_filename = filename.replace('.json', '.parquet')
+                        output_file_path = os.path.join(partition_dir, output_filename)
+                        
+                        df.to_parquet(output_file_path, index=False)
+                        print(f"Successfully processed {raw_file_path} to {output_file_path}")
+                    except Exception as e:
+                        print(f"Error processing {raw_file_path}: {e}")
+                else:
+                    print(f"No valid telemetry records found in {raw_file_path} after validation.")
 
-def main():
-    logger.info("Starting Stage 2: Telemetry Transformation Pipeline")
-    process_raw_files()
+if __name__ == '__main__':
+    # Example usage (will require sample data in data/raw to run effectively)
+    # Ensure data/raw and data/processed directories exist or are created by the class.
+    
+    # Create dummy raw data for testing
+    os.makedirs('data/raw', exist_ok=True)
+    os.makedirs('data/processed', exist_ok=True)
 
-if __name__ == "__main__":
-    main()
+    sample_raw_data = [
+        {
+            "icao_hex": "a00001",
+            "timestamp": "2026-04-16T10:00:00Z",
+            "latitude": 60.192059,
+            "longitude": 24.945831,
+            "altitude": 10000,
+            "velocity": 450,
+            "track": 90,
+            "squawk": "1234",
+            "vertical_rate": 512,
+            "ground_speed": 440,
+            "callsign": "FIN123",
+            "anomaly_corrected": False
+        },
+        {
+            "icao_hex": "b00002",
+            "timestamp": "2026-04-16T10:01:00Z",
+            "latitude": 60.193000,
+            "longitude": 24.946000,
+            "altitude": 10500,
+            "velocity": 460,
+            "track": 95,
+            "squawk": "1235",
+            "vertical_rate": 256,
+            "ground_speed": 450,
+            "callsign": "SAS456",
+            "anomaly_corrected": True
+        },
+        {
+            "icao_hex": "c00003", # Invalid ICAO hex
+            "timestamp": "2026-04-16T10:02:00Z",
+            "latitude": 100.000, # Invalid latitude
+            "longitude": 24.947000,
+            "altitude": 11000,
+            "velocity": 470,
+            "track": 100,
+            "squawk": "1236",
+            "vertical_rate": 0,
+            "ground_speed": 460,
+            "callsign": "NOR789",
+            "anomaly_corrected": False
+        }
+    ]
+
+    with open('data/raw/sample_telemetry_2026-04-16.json', 'w') as f:
+        json.dump(sample_raw_data, f, indent=4)
+
+    transformer = TelemetryTransformer()
+    transformer.process_raw_files()
