@@ -130,7 +130,17 @@ def run_benchmark(date: str):
 
 if __name__ == "__main__":
     d = datetime.now().strftime("%Y-%m-%d")
-    metrics_file, plot_file = run_benchmark(d)
+    try:
+        metrics_file, plot_file = run_benchmark(d)
+    except RuntimeError:
+        # bootstrap sample data path when pipeline hasn't populated storage yet
+        from src.processing.transformer import TelemetryTransformer
+        from src.storage.storage_manager import StorageManager
+
+        TelemetryTransformer().process_raw_files()
+        StorageManager().move_processed_to_storage()
+        metrics_file, plot_file = run_benchmark(d)
+
     print(f"Metrics written: {metrics_file}")
     if plot_file:
         print(f"Plot written: {plot_file}")
