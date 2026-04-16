@@ -35,8 +35,38 @@ The pipeline is structured into four deterministic stages:
 *Requires Python 3.10+*
 
 1. Clone the repository and checkout `develop`.
-2. Install dependencies (TBD: `requirements.txt` / `pyproject.toml`).
+2. Install dependencies:
+   - `python3 -m pip install -r requirements.txt`
+   - `python3 -m pip install playwright`
+   - `python3 -m playwright install chromium`
 3. Follow branch and commit conventions outlined in `CONTRIBUTING.md`.
+
+## Live SECURESKIES Collection (Stage 1)
+
+Run live ingestion from the tactical hub with configurable duration:
+
+```bash
+python3 src/ingestion/scraper.py --minutes 15 --interval 30
+```
+
+Output artifacts:
+- Raw snapshots: `data/raw/telemetry_snapshots_<run_id>.json`
+- Normalized telemetry: `data/raw/telemetry_<run_id>.json`
+
+Important URL constraints for the tactical hub:
+- Use exactly `http://www.securingskies.eu:8080/`
+- Do not switch to `https://`
+- Do not remove `www.`
+- Do not omit port `8080`
+
+## Strict Anomaly Evaluation
+
+The strict evaluation run tracks AUROC, AUPRC, Brier score, Precision/Recall/F1,
+MCC, Balanced Accuracy, and confusion-matrix counts over repeated seeded runs.
+
+Latest strict-eval outputs:
+- `reports/metrics/anomaly_strict_eval_2026-04-16_with_live.csv`
+- `reports/metrics/anomaly_strict_eval_summary_2026-04-16_with_live.csv`
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
