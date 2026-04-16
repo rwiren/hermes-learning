@@ -49,6 +49,16 @@ def main():
         storage_manager.move_processed_to_storage()
         logging.info("--- Stage 3: Storage complete. ---")
 
+        # Stage 4: Analytics & Visualization
+        logging.info("--- Stage 4: Pipeline Analytics ---")
+        try:
+            from src.analytics.pipeline_visualizer import PipelineVisualizer
+            visualizer = PipelineVisualizer()
+            visualizer.run_all_visualizations()
+            logging.info("--- Stage 4: Analytics complete. ---")
+        except Exception as viz_err:
+            logging.warning(f"Analytics step failed: {viz_err}")
+
         logging.info("ADS-B data pipeline finished successfully.")
 
     except Exception as e:
