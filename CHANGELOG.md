@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-04-16
+
 ### Added
 - `src/ingestion/scraper.py`: Playwright-based MLAT telemetry ingestion script with anomaly correction logic for IKARUS C-42 Bison (Hex: 4649e7).
 - `requirements.txt` defining Playwright and BeautifulSoup dependencies.
