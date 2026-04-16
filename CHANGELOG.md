@@ -5,6 +5,16 @@ All notable changes to the **ADS-B Research Grid** project will be documented in
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.0] - 2026-04-16: The "Automation" Update
+**Feature Release: Stage 4 Data Pipeline Automation.**
+
+### ⚙️ Data Pipeline
+*   **Automation Orchestrator:** Implemented `run_pipeline.py` to automate the execution of the Stage 2 (Transformation) and Stage 3 (Storage) data pipeline.
+*   **Workflow Integration:** The master script is designed for easy integration into automation frameworks like cron jobs or GitHub Actions.
+*   **Robust Logging:** Integrated comprehensive logging to `pipeline.log` for improved debugging and pipeline monitoring.
+
+---
+
 ## [0.11.0] - 2026-04-16: The "Data Lake" Update
 **Feature Release: Stage 3 Data Storage Solution.**
 

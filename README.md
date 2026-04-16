@@ -335,8 +335,7 @@ We follow a strict DevOps workflow to ensure integrity across Apple Silicon, Int
 ### 2. Workflow
 1.  **Sync:** `git checkout main && git pull origin main`
 2.  **Branch:** `git checkout -b feature/your-feature-name`
-3.  **Test:** Run `make report` (Must pass locally!)
-4.  **Commit:** Use [Conventional Commits](https://www.conventionalcommits.org/) (e.g., `feat:`, `fix:`, `docs:`).
+3.  **Test:** Run `make report` (Must pass locally!)\n4.  **Commit:** Use [Conventional Commits](https://www.conventionalcommits.org/) (e.g., `feat:`, `fix:`, `docs:`).
 5.  **Merge:** Open a Pull Request.
 
 ### 3. Setup

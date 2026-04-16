@@ -25,6 +25,7 @@ class TelemetryTransformer:
     def __init__(self, raw_data_path='data/raw', processed_data_path='data/processed'):
         self.raw_data_path = raw_data_path
         self.processed_data_path = processed_data_path
+        os.makedirs(self.raw_data_path, exist_ok=True)
         os.makedirs(self.processed_data_path, exist_ok=True)
 
     def _validate_icao_hex(self, icao_hex: str) -> bool:
