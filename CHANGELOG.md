@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Dynamic repository shields/badges to the top of `README.md`.
 - `LICENSE` file establishing MIT License for the project.
 - `README.md` defining the end-to-end MLAT telemetry pipeline architecture and data flow.
 - `CONTRIBUTING.md` establishing Git workflow, branch protections, and Conventional Commits.
