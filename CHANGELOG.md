@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Foundational GNN Anomaly Detector:** Implemented `src/analytics/anomaly_detection/gnn_detector.py` for spatial anomaly detection using a simple GNN model.
 - **Foundational DeepSeek MCHC Anomaly Detector:** Implemented `src/analytics/anomaly_detection/mchc_detector.py` for ghost aircraft detection with a placeholder MCHC model.
 - **Mamba SSM Anomaly Detector:** Implemented `src/analytics/anomaly_detection/mamba_detector.py` for drift attack detection and long-context trajectory tracking.
+- **xLSTM Anomaly Detector:** Implemented `src/analytics/anomaly_detection/xlstm_detector.py` for rapid maneuver anomaly detection.
+
+
 
 
 
