@@ -16,6 +16,10 @@ We needed a reproducible stability check for long document-improvement prompts i
    - no tool/function-call JSON leakage in output
 3. Calculated p50 and p95 latency from successful runs only.
 4. Recorded run-level metadata (duration, stdout size, Hermes session_id) for traceability.
+5. Added cross-path comparison context from prior runs for:
+   - `supergemma4-uncensored` via local Hermes routing
+   - `gpt-5.3-codex` via Copilot
+   to capture practical reliability differences on small vs document-improvement prompts.
 
 ## Evidence
 - Command outputs / logs:
@@ -32,6 +36,14 @@ We needed a reproducible stability check for long document-improvement prompts i
 - Metrics / artifacts:
   - Quality gate passed on all six runs (`all_sections_ok=true` for both models)
   - No tool JSON leakage on any run (`any_tool_json_leak=false` for both models)
+  - Prior comparative runs (same workload family):
+    - `supergemma4-uncensored` via `hermes chat`:
+      - Prompt A (`Reply with exactly OK`): 19.847s, 2.699s
+      - Prompt B (document-improvement style): timeout@180s, timeout@180s
+    - `gpt-5.3-codex` via Copilot:
+      - Prompt A (`Reply with exactly OK`): 11.517s, 10.535s
+      - Prompt B (document-improvement style): 26.53s, 47.405s (success, success)
+    - Extra path check: direct Ollama API ~3.6s for similar prompt, indicating long-generation bottleneck in local `hermes chat` path for this workload shape.
 - Files changed:
   - `learning/lessons/2026-04-17-local-model-doc-benchmark-stability.md`
   - `CHANGELOG.md`
@@ -39,18 +51,22 @@ We needed a reproducible stability check for long document-improvement prompts i
 ## What we learned
 - `qwen2.5:14b` is currently the best default for this workload on this machine: lower p50 and tighter upper bound.
 - `qwen2.5-64k:latest` is slower in this benchmark but remains useful as an explicit override for heavier context windows.
+- `supergemma4-uncensored` can be quick on tiny prompts after warm-up, but is unreliable for practical document-improvement prompt shapes in current local Hermes routing.
+- Copilot `gpt-5.3-codex` is currently the fastest/reliable option for practical document-improvement prompts on this setup.
 - A 3-run p50/p95 sweep is enough to expose practical stability differences that single-run tests can hide.
 
 ## What to repeat
 - Use identical prompt and timeout budgets across models.
 - Require explicit section-header checks and JSON-leak checks in quality gate.
 - Report run-level metadata plus p50/p95 for decision quality.
-- Keep default on the fastest stable model; reserve long-context variant as an override.
+- Keep default on the fastest stable local model; reserve long-context variant as an override.
+- Maintain a separate cross-path benchmark row (local Hermes vs Copilot) for practical document tasks.
 
 ## What to avoid
 - Selecting model defaults from a single run.
 - Comparing models with different prompt structures.
 - Treating long-context model tags as universally better without latency validation.
+- Assuming endpoint responsiveness implies full-path generation performance (`hermes chat` routing/stream path can still bottleneck).
 
 ## Skill candidate?
 - [x] Yes (candidate: reproducible local Hermes doc-benchmark with p50/p95 and quality gates)
