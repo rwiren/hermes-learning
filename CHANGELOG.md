@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Sanitized Public Skills Pack (v0.1):** Added `learning/skills/public/` with shareable operational docs for Signal CLI operations, Git workflow debugging, gateway allowlist routing, macOS launchd recovery, and learning-vault/model-safety bootstrap.
+- **Learning Examples (Sanitized):** Added three reusable lessons in `learning/lessons/` covering GUI conflict-resolution sync, post-merge divergence diagnosis (`1 ahead / 1 behind`), and launchctl bootstrap race recovery.
 - **Learning Vault Bootstrap:** Added `learning/` knowledge workspace with structured sections for lessons, experiments, skill candidates, and reusable templates.
 - **Learning Lesson Template:** Added `learning/templates/lesson-template.md` to standardize evidence-backed learning capture.
 - **Initial Learning Entry:** Added `learning/lessons/2026-04-17-learning-vault-bootstrap.md` documenting branch/issue-linked learning outcomes.
