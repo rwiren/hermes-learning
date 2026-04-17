@@ -9,27 +9,49 @@
 ## Overview
 This repository houses an automated end-to-end (E2E) data pipeline designed to scrape, parse, and format ADS-B/MLAT hex telemetry from the SECURESKIES tactical hub (`www.securingskies.eu`). The primary objective is the generation of synthetic trajectory datasets for machine learning applications, specifically addressing tracking anomalies (e.g., IKARUS C-42 Bison/OH-U439 erroneously classified as B4 UAV).
 
+## Learning Vault (Shared Knowledge Base)
+The repository includes a dedicated `learning/` workspace for capturing reusable lessons, experiment outcomes, and candidate skills.
+
+Structure:
+- `learning/lessons/` — dated lessons learned with evidence
+- `learning/experiments/` — concise hypothesis→result logs
+- `learning/skills/` — candidate procedures for future skill promotion
+- `learning/templates/` — standardized note templates
+
+Rules:
+- Record what was learned and how it was learned.
+- Link every lesson to issue/branch/commit evidence.
+- Never store secrets, tokens, private keys, or personal sensitive data.
+
+## Model Folder Policy (Public Repo Safety)
+The `model/` directory is intentionally allowlisted to track only lightweight metadata:
+- `model/Modelfile`
+- `model/README.md`
+- `model/.gitignore`
+
+Large model binaries (e.g., GGUF/weights/checkpoints) and credentials are excluded from version control by policy.
+
 ## Pipeline Architecture
 
 The pipeline is structured into four deterministic stages:
 
 ### Stage 1: Ingestion (Collection)
-*   **Target:** SECURESKIES web dashboard / API endpoints.
-*   **Mechanism:** Headless extraction (via Playwright/BeautifulSoup) targeting heavily nested DOM elements to capture active track arrays.
-*   **Data Points:** ICAO Hex code, Squawk, Callsign, Latitude, Longitude, Altitude, Ground Speed, and classification flags.
+* **Target:** SECURESKIES web dashboard / API endpoints.
+* **Mechanism:** Headless extraction (via Playwright/BeautifulSoup) targeting heavily nested DOM elements to capture active track arrays.
+* **Data Points:** ICAO Hex code, Squawk, Callsign, Latitude, Longitude, Altitude, Ground Speed, and classification flags.
 
 ### Stage 2: Processing & Parsing (Transformation)
-*   **Validation:** Sanity checks on hex formats and coordinate bounds.
-*   **Correction Logic:** Identification and tagging of known classification anomalies (e.g., cross-referencing Hex `4649e7` to override UAV classifications).
-*   **Formatting:** Flattening hierarchical payload data into structured, strictly typed records.
+* **Validation:** Sanity checks on hex formats and coordinate bounds.
+* **Correction Logic:** Identification and tagging of known classification anomalies (e.g., cross-referencing Hex `4649e7` to override UAV classifications).
+* **Formatting:** Flattening hierarchical payload data into structured, strictly typed records.
 
 ### Stage 3: Storage (Load)
-*   **Format:** Time-series Parquet or append-only CSV.
-*   **Partitioning:** Data partitioned by date (`YYYY-MM-DD`) and region to optimize downstream batch ML processing.
+* **Format:** Time-series Parquet or append-only CSV.
+* **Partitioning:** Data partitioned by date (`YYYY-MM-DD`) and region to optimize downstream batch ML processing.
 
 ### Stage 4: Execution Engine (Automation)
-*   **Scheduling:** CRON-driven daemon executing the ingestion script at defined intervals.
-*   **Monitoring:** Logging stdout/stderr streams to track extraction failure rates and DOM mutation breaks.
+* **Scheduling:** CRON-driven daemon executing the ingestion script at defined intervals.
+* **Monitoring:** Logging stdout/stderr streams to track extraction failure rates and DOM mutation breaks.
 
 ## Development Setup
 *Requires Python 3.10+*

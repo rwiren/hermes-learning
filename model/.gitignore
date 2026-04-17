@@ -1,0 +1,6 @@
+# model/ allowlist (defense-in-depth)
+# Ignore everything by default, then explicitly allow safe metadata.
+*
+!/.gitignore
+!/README.md
+!/Modelfile
