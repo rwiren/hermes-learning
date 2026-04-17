@@ -1,7 +1,42 @@
+# ============================================================
+# hermes-learning :: ignore policy
+# Purpose: keep generated artifacts, local runtime outputs, and
+# sensitive material out of this public repository.
+# ============================================================
+
+# Data pipeline outputs (generated)
 data/raw/
 data/processed/
 data/storage/
+
+# Runtime logs
 pipeline.log
+
+# Reports are generated artifacts by default
 reports/
+
+# Python cache/build artifacts
 **/__pycache__/
 *.pyc
+
+# OS / editor noise
+.DS_Store
+
+# Environment + credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# ------------------------------------------------------------
+# Model folder safety policy
+# Track only lightweight, non-sensitive metadata/config files.
+# Never track model binaries (GGUF/weights/checkpoints).
+# ------------------------------------------------------------
+model/*
+!model/.gitignore
+!model/README.md
+!model/Modelfile
