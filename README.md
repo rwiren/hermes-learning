@@ -31,6 +31,46 @@ The `model/` directory is intentionally allowlisted to track only lightweight me
 
 Large model binaries (e.g., GGUF/weights/checkpoints) and credentials are excluded from version control by policy.
 
+## LLM Benchmark Snapshot (Document-Improvement Workload, 2026-04-17)
+
+This snapshot records observed latency and reliability on this setup for document-improvement style prompts.
+
+### Prompt A (sanity)
+`Reply with exactly OK`
+
+### Prompt B (document-improvement style)
+`Berylia capability-to-impact matrix: list exactly 3 concise improvements...`
+
+### Results
+
+| Model / Path | Prompt A | Prompt B | Notes |
+|---|---:|---:|---|
+| `qwen2.5:14b` via `hermes chat` (local) | n/a in this sweep | 71.81s, 52.44s, 55.13s (p50 55.13s, p95 71.81s) | 3/3 success, required sections present, no tool-JSON leakage |
+| `qwen2.5-64k:latest` via `hermes chat` (local) | n/a in this sweep | 111.49s, 74.82s, 69.34s (p50 74.82s, p95 111.49s) | 3/3 success, required sections present, no tool-JSON leakage |
+| `supergemma4-uncensored` via `hermes chat` (local) | 19.847s, 2.699s | timeout@180s, timeout@180s | Fast warm responses on tiny prompts, unstable on practical doc-improvement workload |
+| `gpt-5.3-codex` via Copilot | 11.517s, 10.535s | 26.53s, 47.405s | Consistently successful and fastest for practical doc-improvement prompt shape in this comparison |
+
+Additional check:
+- Direct Ollama API responded in ~3.6s for a similar prompt, indicating the observed long-generation bottleneck is in the `hermes chat` local-model path for this workload shape, not endpoint availability.
+
+Operational guidance from this snapshot:
+- For local Hermes document-improvement tasks: prefer `qwen2.5:14b` over `qwen2.5-64k:latest` for latency.
+- For highest reliability/speed on practical document-improvement prompts in this environment: use Copilot `gpt-5.3-codex`.
+- Avoid `supergemma4-uncensored` for longer document-improvement generations until routing/generation-path bottleneck is resolved.
+
+### Recommended command presets
+
+```bash
+# 1) Local default (balanced speed/reliability for doc-improvement)
+hermes chat -Q -m qwen2.5:14b -q "<your document-improvement prompt>"
+
+# 2) Local long-context override (when context window matters more than latency)
+hermes chat -Q -m qwen2.5-64k:latest -q "<your document-improvement prompt>"
+
+# 3) Copilot path (fast/reliable on this workload snapshot)
+hermes chat -Q --provider copilot -m gpt-5.3-codex -q "<your document-improvement prompt>"
+```
+
 ## Pipeline Architecture
 
 The pipeline is structured into four deterministic stages:

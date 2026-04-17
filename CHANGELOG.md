@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Local Model Stability Lesson:** Added `learning/lessons/2026-04-17-local-model-doc-benchmark-stability.md` with a reproducible 3-run p50/p95 benchmark for Hermes document-improvement prompts, plus cross-path comparison context for `supergemma4-uncensored` and Copilot `gpt-5.3-codex`.
+- **README Benchmark Snapshot:** Added an LLM benchmark section documenting observed latency/reliability for `qwen2.5:14b`, `qwen2.5-64k:latest`, `supergemma4-uncensored`, and Copilot `gpt-5.3-codex`, including guidance for default vs override usage.
+- **README Command Presets:** Added copy/paste one-liners for `qwen2.5:14b` default, `qwen2.5-64k:latest` long-context override, and Copilot `gpt-5.3-codex` execution path.
 - **Sanitized Public Skills Pack (v0.1):** Added `learning/skills/public/` with shareable operational docs for Signal CLI operations, Git workflow debugging, gateway allowlist routing, macOS launchd recovery, and learning-vault/model-safety bootstrap.
 - **Learning Examples (Sanitized):** Added three reusable lessons in `learning/lessons/` covering GUI conflict-resolution sync, post-merge divergence diagnosis (`1 ahead / 1 behind`), and launchctl bootstrap race recovery.
 - **Learning Vault Bootstrap:** Added `learning/` knowledge workspace with structured sections for lessons, experiments, skill candidates, and reusable templates.
