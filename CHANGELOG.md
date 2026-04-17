@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Learning Vault Bootstrap:** Added `learning/` knowledge workspace with structured sections for lessons, experiments, skill candidates, and reusable templates.
+- **Learning Lesson Template:** Added `learning/templates/lesson-template.md` to standardize evidence-backed learning capture.
+- **Initial Learning Entry:** Added `learning/lessons/2026-04-17-learning-vault-bootstrap.md` documenting branch/issue-linked learning outcomes.
+- **Model Folder Safety Guardrails:** Added strict allowlist policy for `model/` so only metadata files (`Modelfile`, `README.md`, `.gitignore`) are tracked in public git.
+- **Repository Safety Policy Expansion:** Extended root `.gitignore` with OS-noise and credential exclusions plus model-folder allowlist rules.
+- **README Policy Updates:** Documented the Learning Vault workflow and public-repo model safety policy.
 - **Live Stage-1 SECURESKIES Scraper:** Replaced mocked extraction in `src/ingestion/scraper.py` with Playwright-based live ingestion from `http://www.securingskies.eu:8080/`, including configurable duration/interval collection.
 - **Snapshot + Normalized Persistence:** Added dual-output ingestion artifacts (`telemetry_snapshots_<run_id>.json` and `telemetry_<run_id>.json`) to support traceability and reproducible downstream transformation.
 - **Strict Anomaly Evaluation Outputs:** Added strict evaluation result artifacts with expanded metrics (`AUROC`, `AUPRC`, `Brier`, `Precision`, `Recall`, `F1`, `MCC`, balanced accuracy, confusion matrix) in:

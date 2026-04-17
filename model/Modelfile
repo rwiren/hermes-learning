@@ -1,0 +1,12 @@
+# File: model/Modelfile
+# Purpose: Local model recipe metadata only (safe for public repo).
+# Policy: Do not commit model binaries or private checkpoints.
+
+# Example local weight reference (kept local, not tracked):
+# FROM ./my-local-model-q4_k_m.gguf
+
+# Active local reference used by the user environment:
+FROM ./supergemma4-26b-uncensored-fast-v2-Q4_K_M.gguf
+
+# Optional:
+# SYSTEM "You are an expert aviation data scientist..."
