@@ -58,6 +58,19 @@ Operational guidance from this snapshot:
 - For highest reliability/speed on practical document-improvement prompts in this environment: use Copilot `gpt-5.3-codex`.
 - Avoid `supergemma4-uncensored` for longer document-improvement generations until routing/generation-path bottleneck is resolved.
 
+### Recommended command presets
+
+```bash
+# 1) Local default (balanced speed/reliability for doc-improvement)
+hermes chat -Q -m qwen2.5:14b -q "<your document-improvement prompt>"
+
+# 2) Local long-context override (when context window matters more than latency)
+hermes chat -Q -m qwen2.5-64k:latest -q "<your document-improvement prompt>"
+
+# 3) Copilot path (fast/reliable on this workload snapshot)
+hermes chat -Q --provider copilot -m gpt-5.3-codex -q "<your document-improvement prompt>"
+```
+
 ## Pipeline Architecture
 
 The pipeline is structured into four deterministic stages:
