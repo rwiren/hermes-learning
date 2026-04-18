@@ -39,7 +39,7 @@ This snapshot records observed latency and reliability on this setup for documen
 `Reply with exactly OK`
 
 ### Prompt B (document-improvement style)
-`Berylia capability-to-impact matrix: list exactly 3 concise improvements...`
+`Test matrix: list exactly 3 concise improvements...`
 
 ### Results
 
